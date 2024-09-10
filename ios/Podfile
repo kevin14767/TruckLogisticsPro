@@ -23,6 +23,8 @@ target 'TruckingLogisticsPro' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'GoogleMLKit/TextRecognition', '3.2.0'
+  
   target 'TruckingLogisticsProTests' do
     inherit! :complete
     # Pods for testing
