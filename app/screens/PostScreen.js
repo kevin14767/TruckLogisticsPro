@@ -32,9 +32,12 @@ const PostScreen = () => {
     setIsPhotoTaken(false); // Reset to allow retaking the photo
   };
 
-  const processImage = () => {
-    // Navigate to another screen (e.g., ImageProcessingScreen)
-    navigation.navigate('ImageDetailsScreen', { imageUri: selectedImage });
+  const process = () => {
+    if (selectedImage) {
+      navigation.navigate('ImageDetailsScreen', { uri: selectedImage });
+    } else {
+      console.log('No image selected');
+    }
   };
 
   return (
@@ -48,7 +51,7 @@ const PostScreen = () => {
           />
           
           {/* Process Image Button under the Image Preview */}
-          <TouchableOpacity onPress={processImage} style={styles.processImage}>
+          <TouchableOpacity onPress={process} style={styles.processImage}>
             <Text style={styles.buttonText}>Process Image</Text>
           </TouchableOpacity>
 

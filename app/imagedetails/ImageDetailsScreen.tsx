@@ -37,5 +37,37 @@ const ImageDetailsScreen = () => {
     }
   };
 
+  return (
+    <>
+      <View style={styles.outerView}>
+        <Text style={styles.titleImage}>Image:</Text>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{uri}}
+            style={styles.addedImage}
+            resizeMode="contain"
+          />
+        </View>
+        <Text style={styles.titleResult}>Output:</Text>
+        <ScrollView style={styles.imageContainer}>
+          {response?.length !== 0 ? (
+            <View style={styles.resultWrapper}>
+              {response?.map((block, index) => {
+                return (
+                  <Text style={styles.textStyle} key={index}>
+                    {block?.text}
+                  </Text>
+                );
+              })}
+            </View>
+          ) : isLoading ? (
+            <Text style={styles.titleResult}>Please Wait...</Text>
+          ) : (
+            <Text style={styles.titleResult}>Sorry!🙁 No text found</Text>
+          )}
+        </ScrollView>
+      </View>
+    </>
+  );
 };
 export default ImageDetailsScreen;
