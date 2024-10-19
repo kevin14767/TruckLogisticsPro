@@ -3,6 +3,9 @@ import { ScrollView, View, Text, Button, StyleSheet, Dimensions, TextInput, Plat
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import { Ionicons } from '@expo/vector-icons';
 
+//i need to redo home screen lmao all hardcoded
+
+
 // Determine if the device has a notch (based on platform and screen height)
 const { height: windowHeight } = Dimensions.get('window');
 const hasNotch = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTV && windowHeight > 800;

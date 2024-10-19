@@ -3,7 +3,6 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import PostScreen from '../screens/PostScreen';
 import ImageDetailsScreen from '../imagedetails/ImageDetailsScreen';
-import styles from '../imagedetails/ImageDetailsStyles';
 
 const Stack = createStackNavigator();
 

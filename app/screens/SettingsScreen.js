@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -10,8 +10,10 @@ import {
   Image,
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
+import { AuthContext } from '../navigation/AuthProvider';
 
 export default function Example() {
+  const {user, logout} = useContext(AuthContext);
   const [form, setForm] = useState({
     darkMode: false,
     emailNotifications: true,
@@ -51,7 +53,22 @@ export default function Example() {
 
                 <FeatherIcon color="#fff" name="edit" size={16} />
               </View>
+
             </TouchableOpacity>
+
+
+            <TouchableOpacity
+              onPress={() => {
+                logout() //see how this works
+              }}>
+              <View style={styles.profileAction}>
+                <Text style={styles.profileActionText}>Log Out</Text>
+
+                <FeatherIcon color="#fff" name="edit" size={16} />
+              </View>
+
+            </TouchableOpacity>
+
           </View>
 
           <View style={styles.section}>
@@ -207,11 +224,15 @@ export default function Example() {
                       size={20} />
                   </TouchableOpacity>
                 </View>
+
+
+
+
+
               </View>
             </View>
           </View>
 
-          <Text style={styles.contentFooter}>Made with ❤️ in Seattle</Text>
         </ScrollView>
       </View>
     </SafeAreaView>

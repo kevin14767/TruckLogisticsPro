@@ -1,16 +1,18 @@
 //
-//  RTCTextDetectionModule.h
-//  TruckingLogisticsPro
+//  RCTTextDetectionModule.h
+//  TextDetection
 //
-//  Created by Kevin  Barcenas on 9/11/24.
+//  Created by Vishva Dave on 21/09/23.
+//  All credit to her
 //
+
 #ifndef RCTTextDetectionModule_h
 #define RCTTextDetectionModule_h
 
+#endif /* RCTTextDetectionModule_h */
+
 #import <React/RCTBridgeModule.h>
+
 @interface RCTTextDetectionModule : NSObject <RCTBridgeModule>
 
 @end
-
-#endif /* RCTTextDetectionModule_h */
-

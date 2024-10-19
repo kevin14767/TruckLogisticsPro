@@ -6,10 +6,10 @@
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
 	<string>TruckingLogisticsPro</string>
+	<key>NSCameraUsageDescription</key>
+	<string>App needs permission to access your phone camera.</string>	
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Select image/video from photos</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Capture Image</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -51,5 +51,25 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>UIAppFonts</key>
+    <array>
+        <string>Kufam-SemiBoldItalic.ttf</string>
+        <string>Lato-Bold.ttf</string>
+        <string>Lato-BoldItalic.ttf</string>
+        <string>Lato-Italic.ttf</string>
+        <string>Lato-Regular.ttf</string>
+        <string>AntDesign.ttf</string>
+	<string>Feather.ttf</string>
+	<string>FontAwesome.ttf</string>
+	<string>FontAwesome5_Brands.ttf</string>
+	<string>FontAwesome5_Regular.ttf</string>
+	<string>FontAwesome5_Solid.ttf</string>
+
+	</array>
+
+
+
+
 </dict>
 </plist>
