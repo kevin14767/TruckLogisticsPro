@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../navigation/AuthProvider';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Example() {
   const {user, logout} = useContext(AuthContext);
@@ -19,6 +20,9 @@ export default function Example() {
     emailNotifications: true,
     pushNotifications: false,
   });
+
+  const navigation = useNavigation(); // Access navigation
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#1c1c1e' }}>
@@ -31,7 +35,7 @@ export default function Example() {
           </Text>
         </View>
 
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.profile}>
             <Image
               alt=""
@@ -47,6 +51,7 @@ export default function Example() {
             <TouchableOpacity
               onPress={() => {
                 // handle onPress
+                navigation.navigate('EditScreen')
               }}>
               <View style={styles.profileAction}>
                 <Text style={styles.profileActionText}>Edit Profile</Text>
@@ -64,7 +69,7 @@ export default function Example() {
               <View style={styles.profileAction}>
                 <Text style={styles.profileActionText}>Log Out</Text>
 
-                <FeatherIcon color="#fff" name="edit" size={16} />
+                <FeatherIcon color="#fff" name="log-out" size={16} />
               </View>
 
             </TouchableOpacity>
@@ -126,6 +131,7 @@ export default function Example() {
                 <TouchableOpacity
                   onPress={() => {
                     // handle onPress
+
                   }}
                   style={styles.row}>
                   <View
@@ -233,6 +239,8 @@ export default function Example() {
             </View>
           </View>
 
+        
+        
         </ScrollView>
       </View>
     </SafeAreaView>

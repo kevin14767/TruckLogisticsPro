@@ -6,8 +6,15 @@ import { Dimensions } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import FindScreen from '../screens/FindScreen';
 import ChatScreen from '../screens/ChatScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+
 import PostStack from '../navigation/postStack'; // Import the PostStack
+
+
+import SettingStack from '../navigation/SettingStack';
+
+
+//testing for the profile screen
+import ProfileScreen from '../screens/profileScreenTemp';
 
 const Tab = createBottomTabNavigator();
 const { height: windowHeight } = Dimensions.get('window');
@@ -139,7 +146,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="Settings"
-        component={SettingsScreen}
+        component = {SettingStack}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>

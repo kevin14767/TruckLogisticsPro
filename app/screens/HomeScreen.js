@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     paddingTop: 50, // Padding to ensure content starts below the search bar
   },
   welcomeText: {
+    paddingTop:20,
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
