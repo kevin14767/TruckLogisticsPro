@@ -19,19 +19,21 @@ const EditScreen = () => {
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
+                            <ImageBackground
+                            source={{
+                                uri: '',
+                            }}
+                            style={{height: 100, width: 100}}
+                            imageStyle={{borderRadius: 100}}
+                            >
+
+                            </ImageBackground>
+
 
 
 
 
                         </View>
-                        <ImageBackground>
-
-                        </ImageBackground>
-
-
-
-
-
 
                     </TouchableOpacity>
 
