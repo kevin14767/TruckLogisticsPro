@@ -1,45 +1,117 @@
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
+import { Image, ScrollView, Text, View, TouchableOpacity, ActivityIndicator, Platform } from "react-native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import styles from "./ImageDetailsStyles";
 import { ImageDetailRouteType, responseType } from "./ImageDetailsTypes";
 import { recognizeImage } from "./ImageDetailsUtils";
-import OpenAI from "openai";
+import RNFS from "react-native-fs";
 
-import {API_KEY} from "@env";
+// import { OPENAI_API_KEY } from '@env';
 import axios from "axios";
 // Initialize the OpenAI SDK
-const openai = new OpenAI({
-  apiKey: API_KEY,
-});
+
 
 const ImageDetailsScreen = () => {
   const route = useRoute<RouteProp<ImageDetailRouteType, "imageDetails">>();
+
   const [response, setResponse] = useState<Array<responseType>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [structuredData, setStructuredData] = useState<object | null>(null);
   const [processingWithAI, setProcessingWithAI] = useState(false);
 
   const uri = route?.params?.uri;
+  let tempPath: string | null = null; // To store the temporary file path
 
   useEffect(() => {
+    console.log("Image URI passed to ImageDetailsScreen:", uri);
     if (uri) {
       processImage(uri);
     }
+    // Cleanup on component unmount
+    return () => {
+      if (tempPath) {
+        cleanupTemporaryFile(tempPath);
+      }
+    };
   }, [uri]);
 
-  const processImage = async (url: string) => {
+
+  
+  const cleanupTemporaryFile = async (path: string) => {
     try {
-      const result = await recognizeImage(url);
-      setIsLoading(false);
-      if (result?.blocks?.length > 0) {
-        setResponse(result?.blocks);
+      const exists = await RNFS.exists(path);
+      if (exists) {
+        await RNFS.unlink(path);
+        console.log("Temporary file deleted:", path);
+      } else {
+        console.log("Temporary file already deleted or does not exist:", path);
       }
     } catch (error) {
-      setIsLoading(false);
-      console.error("Error processing image:", error);
+      console.error("Error deleting temporary file:", error);
     }
   };
+  
+  
+  const prepareUniqueFilePath = async (uri: string) => {
+    const fileExtension = uri.split(".").pop(); // Get file extension
+    const fileName = `${Date.now()}.${fileExtension}`; // Generate unique name
+    const tempPath = `${RNFS.TemporaryDirectoryPath}${fileName}`; // Fix double slashes
+  
+    try {
+      // Copy the file to the temporary path
+      await RNFS.copyFile(uri, tempPath);
+      console.log("File successfully copied to temp path:", tempPath);
+      return tempPath;
+    } catch (error) {
+      console.error("Error copying file to temp path:", error);
+      throw error;
+    }
+  };
+  
+  
+
+  const processImage = async (url: string) => {
+    let tempPath;
+    try {
+      tempPath = await prepareUniqueFilePath(url);
+      console.log("Full temp path:", tempPath);
+      
+      // Debug: Check file existence
+      const fileExists = await RNFS.exists(tempPath);
+      console.log("File exists:", fileExists);
+  
+      // Try different path formats
+      const pathFormats = [
+        tempPath,
+        `file://${tempPath}`,
+        `file:///${tempPath}`,
+        decodeURIComponent(tempPath)
+      ];
+  
+      for (const path of pathFormats) {
+        console.log("Trying path:", path);
+        try {
+          const result = await recognizeImage(path);
+          if (result?.blocks?.length > 0) {
+            setResponse(result?.blocks);
+            return;
+          }
+        } catch (pathError) {
+          console.error(`Error with path ${path}:`, pathError);
+        }
+      }
+  
+      throw new Error("Could not process image with any path format");
+    } catch (error) {
+      console.error("Comprehensive error processing image:", error);
+      setIsLoading(false);
+    } finally {
+      if (tempPath) {
+        await cleanupTemporaryFile(tempPath);
+      }
+    }
+  };
+  
 
   const handleProcessWithAI = async () => {
     if (response.length === 0) {
@@ -67,13 +139,19 @@ const ImageDetailsScreen = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${API_KEY}`,
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
           },
         }
       );
   
       const resultText = result.data.choices[0]?.message?.content?.trim();
-      setStructuredData(JSON.parse(resultText || "{}"));
+  
+      try {
+        setStructuredData(JSON.parse(resultText || "{}"));
+      } catch (parseError) {
+        console.error("Error parsing OpenAI response:", parseError);
+        alert("Failed to parse structured data.");
+      }
     } catch (error) {
       console.error("Error processing with OpenAI:", error);
       alert("Failed to process data with OpenAI.");
@@ -136,9 +214,7 @@ const ImageDetailsScreen = () => {
           </View>
         )}
 
-        <h1>
-          Fields
-        </h1>
+       
 
 
       </ScrollView>

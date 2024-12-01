@@ -1,31 +1,41 @@
-import React, { useState } from 'react';
-import { Button, Image, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { launchCamera as _launchCamera } from 'react-native-image-picker';
-import { launchImageLibrary as _launchLibrary } from 'react-native-image-picker';
+import React, { useState } from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import ImagePicker from "react-native-image-crop-picker";
 
 const PostScreen = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null); // No need for explicit typing in JS
   const [isPhotoTaken, setIsPhotoTaken] = useState(false);
-  const navigation = useNavigation(); // Access navigation
+  const navigation = useNavigation();
 
-  const handleCameraLaunch = () => {
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false,
-    };
+  const handleSelectImage = async () => {
+    try {
+      const image = await ImagePicker.openPicker({
+        width: 1080,
+        height: 1920,
+        cropping: true,
+        freeStyleCropEnabled: true,
+      });
+      setSelectedImage(image.path);
+      setIsPhotoTaken(true);
+    } catch (error) {
+      console.error("Image selection error:", error.message);
+    }
+  };
 
-    _launchCamera(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('Image picker error: ', response.error);
-      } else {
-        let imageUri = response.uri || response.assets?.[0]?.uri;
-        setSelectedImage(imageUri); // Set image directly without cropping
-        setIsPhotoTaken(true); // Photo is taken
-      }
-    });
+  const handleOpenCamera = async () => {
+    try {
+      const image = await ImagePicker.openCamera({
+        width: 1080,
+        height: 1920,
+        cropping: true,
+        freeStyleCropEnabled: true,
+      });
+      setSelectedImage(image.path);
+      setIsPhotoTaken(true);
+    } catch (error) {
+      console.error("Camera capture error:", error.message);
+    }
   };
 
   const handleRetakePhoto = () => {
@@ -33,30 +43,12 @@ const PostScreen = () => {
     setIsPhotoTaken(false); // Reset to allow retaking the photo
   };
 
-  const handleImageLibraryLaunch = () => {
-    //this will for image selection from photo library
-    const options = {
-      mediaType: 'photo',
-    };
-    _launchLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled');
-      }else if (response.error) {
-        console.log('Image picker error: ', response.error);
-      }else {
-        let imageUri = response.uri || response.assets?.[0].uri;
-        setSelectedImage(imageUri); // Set image directly without cropping
-        setIsPhotoTaken(true); // Photo is taken
-      }
-    });
-
-  }
-
-  const process = () => {
+  const handleProcess = () => {
     if (selectedImage) {
-      navigation.navigate('ImageDetailsScreen', { uri: selectedImage });
+      console.log("Processing Image")
+      navigation.navigate("ImageDetailsScreen", { uri: selectedImage });
     } else {
-      console.log('No image selected');
+      console.log("No image selected");
     }
   };
 
@@ -71,7 +63,7 @@ const PostScreen = () => {
           />
   
           {/* Process Image Button under the Image Preview */}
-          <TouchableOpacity onPress={process} style={styles.processImage}>
+          <TouchableOpacity onPress={handleProcess} style={styles.processImage}>
             <Text style={styles.buttonText}>Process Image</Text>
           </TouchableOpacity>
   
@@ -82,10 +74,10 @@ const PostScreen = () => {
         </>
       ) : (
         <View style={styles.bottomButtonsContainer}>
-          <TouchableOpacity onPress={handleCameraLaunch} style={styles.openCamera}>
+          <TouchableOpacity onPress={handleOpenCamera} style={styles.openCamera}>
             <Text style={styles.buttonText}>Open Camera</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleImageLibraryLaunch} style={styles.openLibrary}>
+          <TouchableOpacity onPress={handleSelectImage} style={styles.openLibrary}>
             <Text style={styles.buttonText}>Open Photo Library</Text>
           </TouchableOpacity>
         </View>
