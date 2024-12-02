@@ -65,6 +65,16 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(5),
     marginVertical: moderateScale(20),
   },
+  submitButton: {
+    backgroundColor: '#007BFF',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: moderateScale(5),
+    paddingVertical: moderateScale(20),
+    marginTop: 24,
+    marginBottom: 48, // Additional space at the bottom
+    paddingHorizontal: 24,
+  },
   buttonText: {
     color: '#fff',
     fontWeight: '500',
