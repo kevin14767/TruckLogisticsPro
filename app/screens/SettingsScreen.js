@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -12,68 +12,102 @@ import {
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import { AuthContext } from '../navigation/AuthProvider';
 import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+import defaultImage from "../assets/icons/default-avatar.png";
+import { useFocusEffect } from '@react-navigation/native'; // Add this import
 
 export default function Example() {
-  const {user, logout} = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
+  const [userData, setUserData] = useState(null);
   const [form, setForm] = useState({
     darkMode: false,
     emailNotifications: true,
     pushNotifications: false,
   });
 
-  const navigation = useNavigation(); // Access navigation
+  const navigation = useNavigation();
 
+  // Fetch user data from Firestore
+  const getUserData = async () => {
+    try {
+      const documentSnapshot = await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+      if (documentSnapshot.exists) {
+        setUserData(documentSnapshot.data());
+      }
+    } catch (error) {
+      console.log('Error fetching user data:', error);
+    }
+  };
+
+  const getLocation = () => {
+    if (!userData) return 'Unknown Location';
+    const { city = '', state = '' } = userData;
+    return `${city}, ${state}`.trim().replace(/^, |, $/g, ''); // Handles empty fields gracefully
+  };
+  const getFullName = () => {
+    if (!userData) return 'John Doe';
+    const { fname = '', lname = '' } = userData;
+    return `${fname} ${lname}`.trim();
+  };
+
+  const renderAvatar = () => {
+    if (userData && userData.fname && userData.lname) {
+      const initials = `${userData.fname[0]}${userData.lname[0]}`.toUpperCase();
+      return (
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{initials}</Text>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.avatar}>
+        <Text style={styles.avatarText}>JD</Text>
+      </View>
+    );
+  };
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserData();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#1c1c1e' }}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Settings</Text>
-
-          <Text style={styles.headerSubtitle}>
-            Lorem ipsum dolor sit amet consectetur.
-          </Text>
+          <Text style={styles.headerSubtitle}>Manage your account settings.</Text>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.profile}>
-            <Image
-              alt=""
-              source={{
-                uri: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2.5&w=256&h=256&q=80',
-              }}
-              style={styles.profileAvatar} />
+        <View style={styles.profile}>
+          {renderAvatar()}
 
-            <Text style={styles.profileName}>John Doe</Text>
+         <Text style={styles.profileName}>{getFullName()}</Text>   
+         <Text style={styles.profileEmail}>{userData?.email || 'john.doe@mail.com'}</Text>
 
-            <Text style={styles.profileEmail}>john.doe@mail.com</Text>
+
 
             <TouchableOpacity
-              onPress={() => {
-                // handle onPress
-                navigation.navigate('EditScreen')
-              }}>
+              onPress={() => navigation.navigate('EditScreen')}>
               <View style={styles.profileAction}>
                 <Text style={styles.profileActionText}>Edit Profile</Text>
-
                 <FeatherIcon color="#fff" name="edit" size={16} />
               </View>
-
             </TouchableOpacity>
 
-
-            <TouchableOpacity
-              onPress={() => {
-                logout() //see how this works
-              }}>
+            <TouchableOpacity onPress={logout}>
               <View style={styles.profileAction}>
                 <Text style={styles.profileActionText}>Log Out</Text>
-
                 <FeatherIcon color="#fff" name="log-out" size={16} />
               </View>
-
             </TouchableOpacity>
-
           </View>
 
           <View style={styles.section}>
@@ -81,166 +115,81 @@ export default function Example() {
 
             <View style={styles.sectionBody}>
               <View style={[styles.rowWrapper, styles.rowFirst]}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-                  }}
-                  style={styles.row}>
-                  <View
-                    style={[styles.rowIcon, { backgroundColor: '#fe9400' }]}>
-                    <FeatherIcon
-                      color="#29292b"
-                      name="globe"
-                      size={20} />
+                <TouchableOpacity style={styles.row}>
+                  <View style={[styles.rowIcon, { backgroundColor: '#fe9400' }]}>
+                    <FeatherIcon color="#29292b" name="globe" size={20} />
                   </View>
-
                   <Text style={styles.rowLabel}>Language</Text>
-
                   <View style={styles.rowSpacer} />
-
                   <Text style={styles.rowValue}>English</Text>
-
-                  <FeatherIcon
-                    color="#C6C6C6"
-                    name="chevron-right"
-                    size={20} />
+                  <FeatherIcon color="#C6C6C6" name="chevron-right" size={20} />
                 </TouchableOpacity>
               </View>
 
               <View style={styles.rowWrapper}>
                 <View style={styles.row}>
-                  <View
-                    style={[styles.rowIcon, { backgroundColor: '#007AFF' }]}>
-                    <FeatherIcon
-                      color="#29292b"
-                      name="moon"
-                      size={20} />
+                  <View style={[styles.rowIcon, { backgroundColor: '#007AFF' }]}>
+                    <FeatherIcon color="#29292b" name="moon" size={20} />
                   </View>
-
                   <Text style={styles.rowLabel}>Dark Mode</Text>
-
                   <View style={styles.rowSpacer} />
-
                   <Switch
-                    onValueChange={darkMode => setForm({ ...form, darkMode })}
-                    value={form.darkMode} />
+                    onValueChange={(darkMode) => setForm({ ...form, darkMode })}
+                    value={form.darkMode}
+                  />
                 </View>
               </View>
 
               <View style={styles.rowWrapper}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // handle onPress
-
-                  }}
-                  style={styles.row}>
-                  <View
-                    style={[styles.rowIcon, { backgroundColor: '#32c759' }]}>
-                    <FeatherIcon
-                      color="#29292b"
-                      name="navigation"
-                      size={20} />
+                <TouchableOpacity style={styles.row}>
+                  <View style={[styles.rowIcon, { backgroundColor: '#32c759' }]}>
+                    <FeatherIcon color="#29292b" name="navigation" size={20} />
                   </View>
-
                   <Text style={styles.rowLabel}>Location</Text>
-
                   <View style={styles.rowSpacer} />
-
-                  <Text style={styles.rowValue}>Los Angeles, CA</Text>
-
-                  <FeatherIcon
-                    color="#C6C6C6"
-                    name="chevron-right"
-                    size={20} />
+                  <Text style={styles.rowValue}>{getLocation()}</Text>     
                 </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Notifications</Text>
-
-              <View style={styles.sectionBody}>
-                <View style={[styles.rowWrapper, styles.rowFirst]}>
-                  <View style={styles.row}>
-                    <View
-                      style={[styles.rowIcon, { backgroundColor: '#38C959' }]}>
-                      <FeatherIcon
-                        color="#29292b"
-                        name="at-sign"
-                        size={20} />
-                    </View>
-
-                    <Text style={styles.rowLabel}>Email Notifications</Text>
-
-                    <View style={styles.rowSpacer} />
-
-                    <Switch
-                      onValueChange={emailNotifications =>
-                        setForm({ ...form, emailNotifications })
-                      }
-                      value={form.emailNotifications} />
-                  </View>
-                </View>
-
-                <View style={styles.rowWrapper}>
-                  <View style={styles.row}>
-                    <View
-                      style={[styles.rowIcon, { backgroundColor: '#38C959' }]}>
-                      <FeatherIcon
-                        color="#29292b"
-                        name="bell"
-                        size={20} />
-                    </View>
-
-                    <Text style={styles.rowLabel}>Push Notifications</Text>
-
-                    <View style={styles.rowSpacer} />
-
-                    <Switch
-                      onValueChange={pushNotifications =>
-                        setForm({ ...form, pushNotifications })
-                      }
-                      value={form.pushNotifications} />
-                  </View>
-                </View>
-
-                <View style={styles.rowWrapper}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      // handle onPress
-                    }}
-                    style={styles.row}>
-                    <View
-                      style={[styles.rowIcon, { backgroundColor: '#FE3C30' }]}>
-                      <FeatherIcon
-                        color="#29292b"
-                        name="music"
-                        size={20} />
-                    </View>
-
-                    <Text style={styles.rowLabel}>Sound</Text>
-
-                    <View style={styles.rowSpacer} />
-
-                    <Text style={styles.rowValue}>Default</Text>
-
-                    <FeatherIcon
-                      color="#C6C6C6"
-                      name="chevron-right"
-                      size={20} />
-                  </TouchableOpacity>
-                </View>
-
-
-
-
-
               </View>
             </View>
           </View>
 
-        
-        
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Notifications</Text>
+
+            <View style={styles.sectionBody}>
+              <View style={[styles.rowWrapper, styles.rowFirst]}>
+                <View style={styles.row}>
+                  <View style={[styles.rowIcon, { backgroundColor: '#38C959' }]}>
+                    <FeatherIcon color="#29292b" name="at-sign" size={20} />
+                  </View>
+                  <Text style={styles.rowLabel}>Email Notifications</Text>
+                  <View style={styles.rowSpacer} />
+                  <Switch
+                    onValueChange={(emailNotifications) =>
+                      setForm({ ...form, emailNotifications })
+                    }
+                    value={form.emailNotifications}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.rowWrapper}>
+                <View style={styles.row}>
+                  <View style={[styles.rowIcon, { backgroundColor: '#38C959' }]}>
+                    <FeatherIcon color="#29292b" name="bell" size={20} />
+                  </View>
+                  <Text style={styles.rowLabel}>Push Notifications</Text>
+                  <View style={styles.rowSpacer} />
+                  <Switch
+                    onValueChange={(pushNotifications) =>
+                      setForm({ ...form, pushNotifications })
+                    }
+                    value={form.pushNotifications}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -255,6 +204,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     flexBasis: 0,
+    marginBottom: 36,
   },
   contentFooter: {
     marginTop: 24,
@@ -289,16 +239,30 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#29292b',
   },
+  avatar: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    backgroundColor: '#007BFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
   profileAvatar: {
     width: 60,
     height: 60,
     borderRadius: 9999,
+    backgroundColor: '#fff'
   },
   profileName: {
     marginTop: 12,
     fontSize: 20,
     fontWeight: '600',
-    color: '#fff',
+    color: '#ffff',
   },
   profileEmail: {
     marginTop: 6,

@@ -8,13 +8,10 @@ import FindScreen from '../screens/FindScreen';
 import ChatScreen from '../screens/ChatScreen';
 
 import PostStack from '../navigation/postStack'; // Import the PostStack
-
+import ReportScreen from '../screens/ReportScreen';
 
 import SettingStack from '../navigation/SettingStack';
 
-
-//testing for the profile screen
-import ProfileScreen from '../screens/profileScreenTemp';
 
 const Tab = createBottomTabNavigator();
 const { height: windowHeight } = Dimensions.get('window');
@@ -104,7 +101,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="Camera"
-        component={PostStack} // Use PostStack instead of PostScreen
+        component={PostStack} // Use PostStack instead of ReportScreen
         options={{
           tabBarIcon: ({ focused }) => (
             <Image

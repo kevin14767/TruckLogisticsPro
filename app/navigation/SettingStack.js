@@ -11,7 +11,7 @@ const SettingStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{headerShown: false}}/>
-      <Stack.Screen name="EditScreen" component={EditScreen} options={{headerShown: true}} />
+      <Stack.Screen name="EditScreen" component={EditScreen} options={{headerShown: false}} />
     </Stack.Navigator>
   );
 };

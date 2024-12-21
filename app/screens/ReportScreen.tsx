@@ -1,23 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { 
+  View, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity, 
+  Alert, 
+  ActivityIndicator, 
+  Dimensions 
+} from 'react-native';
 import Pdf from 'react-native-pdf';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { RouteProp } from '@react-navigation/native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { PostStackParamList } from '../navigation/PostStackParamList';
-import { BaseReceipt } from '../imagedetails/ReceiptInterfaces';
+import FeatherIcon from 'react-native-vector-icons/Feather';
+import storage from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 
 type ReportScreenRouteProp = RouteProp<PostStackParamList, 'ReportScreen'>;
 
 const ReportScreen = ({ route }: { route: ReportScreenRouteProp }) => {
-  const navigation = useNavigation<NavigationProp<PostStackParamList>>();
-  const { receipt } = route.params;
-
+  const [reports, setReports] = useState<any[]>([]);
   const [pdfPath, setPdfPath] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const navigation = useNavigation<NavigationProp<PostStackParamList>>();
+  const { receipt } = route.params;
+
   // Generate HTML content dynamically
   const generateHtmlContent = () => {
+    if (!receipt || Object.keys(receipt).length === 0) {
+      return `<html><body><h1>No Data Available</h1></body></html>`;
+    }
+
     const rows = Object.entries(receipt).map(
       ([key, value]) =>
         `<tr><td style="border: 1px solid #ddd; padding: 8px;">${key.replace(/([A-Z])/g, ' $1')}</td><td style="border: 1px solid #ddd; padding: 8px;">${value}</td></tr>`
@@ -65,41 +80,97 @@ const ReportScreen = ({ route }: { route: ReportScreenRouteProp }) => {
     `;
   };
 
-  // Create PDF from HTML content
+  const uploadReport = async (pdfPath: string, receipt: any) => {
+    try {
+      // 1. Upload PDF to Storage
+      const fileName = `reports/${Date.now()}_receipt_report.pdf`;
+      const reference = storage().ref(fileName);
+      await reference.putFile(pdfPath);
+      const downloadUrl = await reference.getDownloadURL();
+
+      // 2. Store metadata in Firestore
+      const reportMetadata = {
+        fileName: fileName,
+        downloadUrl: downloadUrl,
+        createdAt: firestore.Timestamp.now(),
+        receiptData: receipt,
+        status: 'completed'
+      };
+
+      // Add to 'reports' collection in Firestore
+      await firestore()
+        .collection('reports')
+        .add(reportMetadata);
+
+      return { downloadUrl, metadata: reportMetadata };
+    } catch (error) {
+      console.error('Error uploading report:', error);
+      throw error;
+    }
+  };
+
+  const fetchReports = async () => {
+    try {
+      const reportsSnapshot = await firestore()
+        .collection('reports')
+        .orderBy('createdAt', 'desc')
+        .get();
+
+      return reportsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+      throw error;
+    }
+  };
+
+  const loadReports = async () => {
+    try {
+      const fetchedReports = await fetchReports();
+      setReports(fetchedReports);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to fetch reports');
+    }
+  };
+
   const createPdf = async () => {
     try {
       const pdfContent = generateHtmlContent();
-      let options = {
+      const options = {
         html: pdfContent,
         fileName: 'receipt_report',
         directory: 'Documents',
       };
-      let pdf = await RNHTMLtoPDF.convert(options);
+
+      const pdf = await RNHTMLtoPDF.convert(options);
       if (pdf.filePath) {
         setPdfPath(pdf.filePath);
-        setIsLoading(false);
-      } else {
-        throw new Error('Failed to generate PDF file');
+        const result = await uploadReport(pdf.filePath, receipt);
+        Alert.alert('Success', 'Report uploaded successfully!');
+        loadReports(); // Refresh the reports list
+        return result;
       }
+      throw new Error('Failed to generate PDF file');
     } catch (error) {
       console.error('Error creating PDF:', error);
-      Alert.alert('Error', 'Failed to generate the PDF file.');
+      Alert.alert('Error', 'Failed to generate or upload the PDF file.');
+      throw error;
+    } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     createPdf();
+    loadReports();
   }, []);
-
-  const handleBack = () => {
-    navigation.goBack();
-  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-        <Text style={styles.backButtonText}>Back to Verification</Text>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <FeatherIcon name="corner-up-left" size={25} color="#fff" />
       </TouchableOpacity>
       
       <Text style={styles.header}>Receipt Report</Text>
@@ -147,15 +218,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   backButton: {
-    backgroundColor: '#007BFF',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+    marginTop: 20,
+    marginLeft: 10,
   },
 });

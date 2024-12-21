@@ -17,9 +17,20 @@ RCT_EXPORT_METHOD(recognizeImage:(NSString *)url  resolver:(RCTPromiseResolveBlo
   
   RCTLogInfo(@"URL: %@", url);
   
-  NSURL *_url = [NSURL URLWithString:url];
-  NSData *imageData = [NSData dataWithContentsOfURL:_url];
-  UIImage *image = [UIImage imageWithData:imageData];
+   NSURL *_url = [NSURL URLWithString:url];
+   NSData *imageData = [NSData dataWithContentsOfURL:_url];
+   UIImage *image = [UIImage imageWithData:imageData];
+
+  
+// NSURL *url = [NSURL fileURLWithPath:cleanUrlString];
+
+// if (!url) {
+//  reject(@"invalid_url", @"Could not create URL from path", nil);
+//  return;
+// }
+
+//  NSData *imageData = [NSData dataWithContentsOfURL:_url];
+//  UIImage *image = [UIImage imageWithData:imageData];
   
   MLKVisionImage *visionImage = [[MLKVisionImage alloc] initWithImage:image];
   visionImage.orientation = image.imageOrientation;

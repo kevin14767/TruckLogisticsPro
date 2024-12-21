@@ -28,7 +28,7 @@ target 'TruckingLogisticsPro' do
   )
 
   pod 'GoogleMLKit/TextRecognition', '7.0.0'
-
+  pod 'Firebase/Storage'
   target 'TruckingLogisticsProTests' do
     inherit! :complete
     # Pods for testing
