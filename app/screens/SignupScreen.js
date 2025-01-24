@@ -1,132 +1,181 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { Colors, horizontalScale, verticalScale, moderateScale } from '../themes';
 import FormButton from '../components/FormButton';
-import FormInput from '../components/Forminput';
+import FormInput from '../components/FormInput';
 import SocialButton from '../components/SocialButton';
 import { AuthContext } from '../navigation/AuthProvider';
 import { useNavigation } from '@react-navigation/native';
 
 const SignupScreen = () => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
-
+  const { googleLogin } = useContext(AuthContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { register } = useContext(AuthContext);
   const navigation = useNavigation();
 
   return (
-    <ScrollView contentContainerStyle={styles.container} style={styles.scrollView}>
-      <Text style={styles.title}>Create an Account</Text>
-
-      <FormInput
-        labelValue={email}
-        onChangeText={(userEmail) => setEmail(userEmail)}
-        placeholderText="Email"
-        iconType="user"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-      />
-
-      <FormInput
-        labelValue={password}
-        onChangeText={(userPassword) => setPassword(userPassword)}
-        placeholderText="Password"
-        iconType="lock"
-        secureTextEntry={true}
-      />
-
-      <FormInput
-        labelValue={confirmPassword}
-        onChangeText={(userPassword) => setConfirmPassword(userPassword)}
-        placeholderText="Confirm Password"
-        iconType="lock"
-        secureTextEntry={true}
-      />
-
-      <FormButton buttonTitle="Sign Up" onPress={() => register(email, password)} />
-
-      <View style={styles.textPrivate}>
-        <Text style={styles.colorTextPrivate}>
-          By registering, you confirm that you accept our{' '}
-        </Text>
-        <TouchableOpacity onPress={() => alert('Terms Clicked!')}>
-          <Text style={[styles.colorTextPrivate, { color: '#e88832' }]}>
-            Terms of Service
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.colorTextPrivate}> and </Text>
-        <TouchableOpacity onPress={() => alert('Privacy Policy Clicked!')}>
-          <Text style={[styles.colorTextPrivate, { color: '#e88832' }]}>
-            Privacy Policy
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <SocialButton
-        buttonTitle="Sign In with Facebook"
-        btnType="facebook"
-        color="#4867aa"
-        backgroundColor="#e6eaf4"
-      />
-
-      <SocialButton
-        buttonTitle="Sign In with Google"
-        btnType="google"
-        color="#de4d41"
-        backgroundColor="#f5e7ea"
-      />
-
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigation.navigate('Login')}
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.navButtonText}>Have an account? Sign In</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>Create an Account</Text>
+          <Text style={styles.subtitle}>Join Trucking Logistics Pro</Text>
+        </View>
+
+        <View style={styles.formContainer}>
+          <FormInput
+            labelValue={email}
+            onChangeText={setEmail}
+            placeholderText="Email"
+            iconType="user"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <FormInput
+            labelValue={password}
+            onChangeText={setPassword}
+            placeholderText="Password"
+            iconType="lock"
+            secureTextEntry
+          />
+          <FormInput
+            labelValue={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholderText="Confirm Password"
+            iconType="lock"
+            secureTextEntry
+          />
+
+          <FormButton 
+            buttonTitle="Sign Up" 
+            onPress={() => register(email, password)}
+          />
+        </View>
+
+        <View style={styles.termsContainer}>
+          <Text style={styles.termsText}>
+            By registering, you confirm that you accept our{' '}
+            <Text 
+              style={styles.termsLink}
+              onPress={() => alert('Terms Clicked!')}
+            >
+              Terms of Service
+            </Text>
+            {' '}and{' '}
+            <Text 
+              style={styles.termsLink}
+              onPress={() => alert('Privacy Policy Clicked!')}
+            >
+              Privacy Policy
+            </Text>
+          </Text>
+        </View>
+
+        <View style={styles.dividerContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <SocialButton
+          buttonTitle="Sign In with Google"
+          btnType="google"
+          color="#004d40"
+          backgroundColor={Colors.white}
+          onPress={googleLogin}
+        />
+
+        <TouchableOpacity
+          style={styles.signInButton}
+          onPress={() => navigation.navigate('Login')}
+        >
+          <Text style={styles.signInText}>
+            Have an account? <Text style={styles.signInLink}>Sign In</Text>
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-export default SignupScreen;
-
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#1c1c1e',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: 50,
-  },
-  scrollView: {
-    backgroundColor: '#1c1c1e',
+  safeArea: {
     flex: 1,
+    backgroundColor: Colors.darkGrey,
+  },
+  container: {
+    flexGrow: 1,
+    paddingHorizontal: horizontalScale(20),
+    paddingTop: verticalScale(40),
+    paddingBottom: verticalScale(20),
+  },
+  headerContainer: {
+    alignItems: 'center',
+    marginBottom: verticalScale(30),
   },
   title: {
-    fontSize: 28,
+    fontSize: moderateScale(28),
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 20,
+    color: Colors.white,
+    marginBottom: verticalScale(5),
+  },
+  subtitle: {
+    fontSize: moderateScale(16),
+    color: Colors.grey,
+  },
+  formContainer: {
+    width: '100%',
+    marginBottom: verticalScale(20),
+  },
+  termsContainer: {
+    marginVertical: verticalScale(20),
+    paddingHorizontal: horizontalScale(10),
+  },
+  termsText: {
+    fontSize: moderateScale(14),
+    color: Colors.grey,
     textAlign: 'center',
+    lineHeight: moderateScale(20),
   },
-  navButton: {
-    marginTop: 15,
-  },
-  navButtonText: {
-    fontSize: 16,
+  termsLink: {
+    color: Colors.redThemeColor,
     fontWeight: '500',
-    color: '#fff',
-    textAlign: 'center',
   },
-  textPrivate: {
+  dividerContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 35,
-    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: verticalScale(5),
+    marginBottom: verticalScale(15),
+    paddingHorizontal: horizontalScale(10),
   },
-  colorTextPrivate: {
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#b0b0b0',
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.grey,
+  },
+  orText: {
+    color: Colors.grey,
+    paddingHorizontal: horizontalScale(10),
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+  },
+  signInButton: {
+    marginTop: verticalScale(20),
+  },
+  signInText: {
+    color: Colors.grey,
+    fontSize: moderateScale(14),
     textAlign: 'center',
+  },
+  signInLink: {
+    color: Colors.white,
+    fontWeight: 'bold',
   },
 });
+
+export default SignupScreen;

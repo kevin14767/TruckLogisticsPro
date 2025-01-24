@@ -5,7 +5,7 @@ const Colors = {
   grey: '#696969',
   darkGrey: '#1A1A17',
   offWhite: '#f3f3ec',
-  redThemeColor: '#DE5E69',
+  redThemeColor: '#004d40',
 };
 
 export default Colors;

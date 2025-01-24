@@ -1,6 +1,7 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {windowHeight, windowWidth} from '../utils/Dimensions';
+import { Colors, horizontalScale, verticalScale, moderateScale } from '../themes';
+
 
 const FormButton = ({buttonTitle, ...rest}) => {
   return (
@@ -12,21 +13,29 @@ const FormButton = ({buttonTitle, ...rest}) => {
 
 export default FormButton;
 
+// FormButton.js
 const styles = StyleSheet.create({
   buttonContainer: {
-    marginTop: 10,
+    marginVertical: verticalScale(10),
     width: '100%',
-    height: windowHeight / 15,
-    backgroundColor: '#004d40',
-    padding: 10,
+    height: verticalScale(50),
+    backgroundColor: Colors.redThemeColor,
+    borderRadius: moderateScale(8),
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 3,
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    // fontFamily: 'Lato-Regular',
+    fontSize: moderateScale(18),
+    fontWeight: '600',
+    color: Colors.white,
+    letterSpacing: 0.5,
   },
 });

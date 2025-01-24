@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, TextInput, StyleSheet} from 'react-native';
-import {windowHeight, windowWidth} from '../utils/Dimensions';
+import { Colors, horizontalScale, verticalScale, moderateScale } from '../themes';
+
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -8,7 +9,7 @@ const FormInput = ({labelValue, placeholderText, iconType, ...rest}) => {
   return (
     <View style={styles.inputContainer}>
       <View style={styles.iconStyle}>
-        <AntDesign name={iconType} size={25} color="#666" />
+        <AntDesign name={iconType} size={moderateScale(25)} color={Colors.grey}/>
       </View>
       <TextInput
         value={labelValue}
@@ -26,43 +27,36 @@ export default FormInput;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginTop: 5,
-    marginBottom: 10,
+    marginVertical: verticalScale(8),
     width: '100%',
-    height: windowHeight / 15,
-    borderColor: '#1c1c1e',
-    borderRadius: 3,
-    borderWidth: 1,
+    height: verticalScale(50),
+    borderRadius: moderateScale(8),
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ffff',
+    backgroundColor: Colors.white,
+    overflow: 'hidden',
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
   iconStyle: {
-    padding: 10,
+    padding: moderateScale(10),
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRightColor: '#1c1c1e',
+    borderRightColor: Colors.offWhite,
     borderRightWidth: 1,
-    width: 50,
+    width: horizontalScale(50),
   },
   input: {
-    padding: 10,
     flex: 1,
-    fontSize: 16,
-    // fontFamily: 'Lato-Regular',
-    color: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputField: {
-    padding: 10,
-    marginTop: 5,
-    marginBottom: 10,
-    width: windowWidth / 1.5,
-    height: windowHeight / 15,
-    fontSize: 16,
-    borderRadius: 8,
-    borderWidth: 1,
+    paddingHorizontal: horizontalScale(15),
+    fontSize: moderateScale(16),
+    color: Colors.darkGrey,
   },
 });
