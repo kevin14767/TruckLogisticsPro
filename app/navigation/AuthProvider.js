@@ -2,67 +2,152 @@ import React, { createContext, useState } from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { Alert } from 'react-native';
 
-// Initialize Google Sign-In configuration
+// Initial configuration for Google Sign-In
+// This runs when the app starts and sets up the basic parameters needed for Google authentication
 GoogleSignin.configure({
-  // Get this value from your GoogleService-Info.plist file
   iosClientId: '109641224107-qeear70iu9183fcl29r1le38bpnklupe.apps.googleusercontent.com',
+  webClientId: '109641224107-bov0hmctvj2td85cmb9rnda27fjac6ls.apps.googleusercontent.com',
+  offlineAccess: true, // This allows the app to refresh tokens when needed
 });
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // Central state management for user authentication status
   const [user, setUser] = useState(null);
 
-  // Add this new method for Google Sign-In
+  // Enhanced Google Sign-In implementation
+  // This function handles the complete flow from Google authentication to Firebase sign-in
   const googleLogin = async () => {
     try {
-      // Get the user's ID token
-      const { idToken } = await GoogleSignin.signIn();
+      // Clear any existing sign-in state to prevent conflicts
+      if (GoogleSignin && typeof GoogleSignin.signOut === 'function') {
+        await GoogleSignin.signOut();
+      }
+
+      // Verify Google Play Services availability
+      // This check is helpful even on iOS to ensure proper service initialization
+      await GoogleSignin.hasPlayServices();
       
-      // Create a Firebase credential from the token
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      // Initiate Google Sign-In and get user information
+      const userInfo = await GoogleSignin.signIn();
+      console.log('Successfully completed Google Sign In');
       
-      // Sign in to Firebase with the credential
-      const userCredential = await auth().signInWithCredential(googleCredential);
+      // Retrieve authentication tokens
+      const { accessToken } = await GoogleSignin.getTokens();
+      console.log('Successfully got tokens');
       
-      // If this is a new user, create their document in Firestore
-      const currentUser = userCredential.user;
-      
-      // Check if user document already exists
-      const userDoc = await firestore()
-        .collection('users')
-        .doc(currentUser.uid)
-        .get();
-        
-      if (!userDoc.exists) {
-        await firestore()
+      // Create Firebase credential using both ID token and access token
+      const credential = auth.GoogleAuthProvider.credential(
+        userInfo.idToken,
+        accessToken
+      );
+      console.log('Created credential');
+
+      // Sign in to Firebase using the Google credential
+      const result = await auth().signInWithCredential(credential);
+      console.log('Successfully signed in to Firebase');
+
+      // Handle Firestore user document creation or verification
+      if (result.user) {
+        const userDoc = await firestore()
           .collection('users')
-          .doc(currentUser.uid)
-          .set({
-            fname: currentUser.displayName?.split(' ')[0] || '',
-            lname: currentUser.displayName?.split(' ').slice(1).join(' ') || '',
-            email: currentUser.email,
-            createdAt: firestore.Timestamp.fromDate(new Date()),
-          });
-        console.log('New Google user added to Firestore!');
+          .doc(result.user.uid)
+          .get();
+          
+        // Create a new user document if it doesn't exist
+        if (!userDoc.exists) {
+          await firestore()
+            .collection('users')
+            .doc(result.user.uid)
+            .set({
+              fname: result.user.displayName?.split(' ')[0] || '',
+              lname: result.user.displayName?.split(' ').slice(1).join(' ') || '',
+              email: result.user.email,
+              createdAt: firestore.Timestamp.fromDate(new Date()),
+            });
+          console.log('Created new user document in Firestore');
+        }
       }
     } catch (error) {
+      // Comprehensive error logging for debugging
+      console.log('Detailed error information:', {
+        errorCode: error.code,
+        errorMessage: error.message,
+        fullError: JSON.stringify(error, null, 2)
+      });
+      
+      if (error?.response) {
+        console.log('Error response:', error.response);
+      }
+
+      // Handle specific error cases
       if (error.code === 'SIGN_IN_CANCELLED') {
         console.log('User cancelled the sign-in flow');
       } else if (error.code === 'IN_PROGRESS') {
         console.log('Sign-in is already in progress');
-      } else {
-        console.log('Google sign-in error:', error);
       }
     }
   };
 
+  // Enhanced logout function that handles both Google and Firebase sign-out
+  const logout = async () => {
+    try {
+      // Check if GoogleSignin is available and properly initialized
+      if (GoogleSignin && typeof GoogleSignin.isSignedIn === 'function') {
+        try {
+          const isSignedInWithGoogle = await GoogleSignin.isSignedIn();
+          if (isSignedInWithGoogle) {
+            await GoogleSignin.signOut();
+            console.log('Successfully signed out from Google');
+          }
+        } catch (googleError) {
+          console.log('Google sign out error:', googleError);
+          // Continue with Firebase logout even if Google sign out fails
+        }
+      }
+
+      // Proceed with Firebase sign out
+      await auth().signOut();
+      console.log('Successfully signed out from Firebase');
+      
+      // Clear the user state
+      setUser(null);
+    } catch (error) {
+      console.log('Error during sign out:', {
+        code: error?.code,
+        message: error?.message,
+        fullError: JSON.stringify(error, null, 2)
+      });
+      
+      // Final cleanup attempt even if main logout fails
+      try {
+        await auth().signOut();
+        setUser(null);
+      } catch (finalError) {
+        console.log('Final sign out attempt failed:', finalError);
+      }
+    }
+  };
+
+  const resetPassword = async (email) => {
+    try {
+      await auth().sendPasswordResetEmail(email);
+      Alert.alert('Success', 'Password reset email has been sent');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  // Context provider that makes authentication methods available throughout the app
   return (
     <AuthContext.Provider
       value={{
         user,
         setUser,
+        // Standard email/password login
         login: async (email, password) => {
           try {
             await auth().signInWithEmailAndPassword(email, password);
@@ -70,7 +155,8 @@ export const AuthProvider = ({ children }) => {
             console.log(e);
           }
         },
-        googleLogin, // Add the new Google sign-in method to the context
+        googleLogin, // Enhanced Google sign-in method
+        // User registration with email/password
         register: async (email, password) => {
           try {
             const userCredential = await auth().createUserWithEmailAndPassword(email, password);
@@ -91,18 +177,9 @@ export const AuthProvider = ({ children }) => {
             console.log('Error during registration:', e);
           }
         },
-        logout: async () => {
-          try {
-            // Sign out from Google
-            if (await GoogleSignin.isSignedIn()) {
-              await GoogleSignin.signOut();
-            }
-            // Sign out from Firebase
-            await auth().signOut();
-          } catch (e) {
-            console.log(e);
-          }
-        },
+        logout, // Enhanced logout method
+        resetPassword,
+
       }}
     >
       {children}

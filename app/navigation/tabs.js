@@ -4,8 +4,8 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Dimensions } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
-import FindScreen from '../screens/FindScreen';
-import ChatScreen from '../screens/ChatScreen';
+import StatsScreen from '../screens/StatsScreen';
+import Reports from '../screens/Reports';
 
 import PostStack from '../navigation/postStack'; // Import the PostStack
 import ReportScreen from '../screens/ReportScreen';
@@ -79,7 +79,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="Reports"
-        component={ChatScreen}
+        component={Reports}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -121,7 +121,7 @@ const Tabs = () => {
       />
       <Tab.Screen
         name="Stats"
-        component={FindScreen}
+        component={StatsScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>

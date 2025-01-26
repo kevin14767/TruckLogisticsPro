@@ -29,6 +29,7 @@ target 'TruckingLogisticsPro' do
 
   pod 'GoogleMLKit/TextRecognition', '7.0.0'
   pod 'Firebase/Storage'
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   target 'TruckingLogisticsProTests' do
     inherit! :complete
     # Pods for testing

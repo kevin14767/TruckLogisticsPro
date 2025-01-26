@@ -106,7 +106,7 @@ const SignupScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.darkGrey,
+    backgroundColor: Colors.black_grey,
   },
   container: {
     flexGrow: 1,

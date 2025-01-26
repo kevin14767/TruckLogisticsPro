@@ -51,7 +51,7 @@ const LoginScreen = () => {
           
           <TouchableOpacity 
             style={styles.forgotButton} 
-            onPress={() => {}}
+            onPress={() => navigation.navigate('ForgotPassword')}
           >
             <Text style={styles.forgotButtonText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -89,7 +89,7 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Colors.darkGrey,
+    backgroundColor: Colors.black_grey,
   },
   container: {
     flexGrow: 1,
@@ -129,7 +129,8 @@ const styles = StyleSheet.create({
   },
   forgotButtonText: {
     color: Colors.grey,
-    fontSize: moderateScale(14),
+    fontWeight: '600',
+    fontSize: moderateScale(16),
     textAlign: 'center',
   },
   dividerContainer: {

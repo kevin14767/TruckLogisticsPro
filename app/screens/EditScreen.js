@@ -7,6 +7,8 @@ import {
   ImageBackground,
   TextInput,
   Alert,
+  ScrollView,
+  SafeAreaView,
 } from "react-native";
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -14,7 +16,8 @@ import defaultImage from "../assets/icons/default-avatar.png";
 import FormButton from "../components/FormButton";
 import { AuthContext } from "../navigation/AuthProvider";
 import firestore from '@react-native-firebase/firestore';
-import Avatar from "react-avatar";
+import { Colors, moderateScale, horizontalScale, verticalScale } from '../themes';
+
 
 const EditScreen = ({ navigation }) => {
   const { user, logout } = useContext(AuthContext);
@@ -81,103 +84,109 @@ const EditScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <FeatherIcon name="corner-up-left" size={25} color="#fff" />
+        <FeatherIcon name="corner-up-left" size={25} color={Colors.white} />
       </TouchableOpacity>
-      <View style={{ margin: 20 }}>
-        <View style={{ alignItems: "center" }}>
-          <TouchableOpacity onPress={() => {}}>
-            <View style={styles.imageContainer}>{renderAvatar()}</View>
-          </TouchableOpacity>
-          <Text style={styles.userName}>
-            {userData ? `${userData.fname} ${userData.lname}` : ''}
-          </Text>
-        </View>
+      
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.contentContainer}>
+          <View style={styles.profileSection}>
+            <TouchableOpacity onPress={() => {}}>
+              <View style={styles.imageContainer}>{renderAvatar()}</View>
+            </TouchableOpacity>
+            <Text style={styles.userName}>
+              {userData ? `${userData.fname} ${userData.lname}` : ''}
+            </Text>
+          </View>
 
-        {/* Input Fields */}
-        <View style={styles.action}>
-          <FontAwesome name="user-o" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="First Name"
-            placeholderTextColor="#fff"
-            value={userData?.fname || ''}
-            onChangeText={(txt) => setUserData({ ...userData, fname: txt })}
-            style={styles.textInput}
+          <View style={styles.action}>
+            <FontAwesome name="user-o" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="First Name"
+              placeholderTextColor={Colors.grey}
+              value={userData?.fname || ''}
+              onChangeText={(txt) => setUserData({ ...userData, fname: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <FontAwesome name="user-o" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="Last Name"
+              placeholderTextColor={Colors.grey}
+              value={userData?.lname || ''}
+              onChangeText={(txt) => setUserData({ ...userData, lname: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <FontAwesome name="phone" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="Phone"
+              keyboardType="number-pad"
+              placeholderTextColor={Colors.grey}
+              value={userData?.phone || ''}
+              onChangeText={(txt) => setUserData({ ...userData, phone: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <FontAwesome name="envelope-o" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="Email"
+              keyboardType="email-address"
+              placeholderTextColor={Colors.grey}
+              value={userData?.email || ''}
+              onChangeText={(txt) => setUserData({ ...userData, email: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <FontAwesome name="globe" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="Country"
+              placeholderTextColor={Colors.grey}
+              value={userData?.country || ''}
+              onChangeText={(txt) => setUserData({ ...userData, country: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <FeatherIcon name="map-pin" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="City"
+              placeholderTextColor={Colors.grey}
+              value={userData?.city || ''}
+              onChangeText={(txt) => setUserData({ ...userData, city: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <View style={styles.action}>
+            <FeatherIcon name="map" size={20} color={Colors.grey} />
+            <TextInput
+              placeholder="State"
+              placeholderTextColor={Colors.grey}
+              value={userData?.state || ''}
+              onChangeText={(txt) => setUserData({ ...userData, state: txt })}
+              style={styles.textInput}
+            />
+          </View>
+
+          <FormButton 
+            buttonTitle="Update" 
+            onPress={handleUpdate}
+            style={styles.updateButton}
           />
         </View>
-
-        <View style={styles.action}>
-          <FontAwesome name="user-o" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="Last Name"
-            placeholderTextColor="#fff"
-            value={userData?.lname || ''}
-            onChangeText={(txt) => setUserData({ ...userData, lname: txt })}
-            style={styles.textInput}
-          />
-        </View>
-
-        <View style={styles.action}>
-          <FontAwesome name="phone" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="Phone"
-            keyboardType="number-pad"
-            placeholderTextColor="#fff"
-            value={userData?.phone || ''}
-            onChangeText={(txt) => setUserData({ ...userData, phone: txt })}
-            style={styles.textInput}
-          />
-        </View>
-
-        <View style={styles.action}>
-          <FontAwesome name="envelope-o" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="Email"
-            keyboardType="email-address"
-            placeholderTextColor="#fff"
-            value={userData?.email || ''}
-            onChangeText={(txt) => setUserData({ ...userData, email: txt })}
-            style={styles.textInput}
-          />
-        </View>
-
-        <View style={styles.action}>
-          <FontAwesome name="globe" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="Country"
-            placeholderTextColor="#fff"
-            value={userData?.country || ''}
-            onChangeText={(txt) => setUserData({ ...userData, country: txt })}
-            style={styles.textInput}
-          />
-        </View>
-
-        <View style={styles.action}>
-          <FeatherIcon name="map-pin" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="City"
-            placeholderTextColor="#fff"
-            value={userData?.city || ''}
-            onChangeText={(txt) => setUserData({ ...userData, city: txt })}
-            style={styles.textInput}
-          />
-        </View>
-
-        <View style={styles.action}>
-          <FeatherIcon name="map" size={20} color={"#fff"} />
-          <TextInput
-            placeholder="State"
-            placeholderTextColor="#fff"
-            value={userData?.state || ''}
-            onChangeText={(txt) => setUserData({ ...userData, state: txt })}
-            style={styles.textInput}
-          />
-        </View>
-
-        <FormButton buttonTitle="Update" onPress={handleUpdate} />
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -186,58 +195,86 @@ export default EditScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1c1c1e",
-    paddingTop: 36,
+    backgroundColor: Colors.black_grey,
+  },
+  contentContainer: {
+    padding: moderateScale(20),
+    paddingBottom: moderateScale(40),
   },
   backButton: {
-    marginTop: 20,
-    marginLeft: 10,
+    padding: moderateScale(16),
+    marginLeft: horizontalScale(8),
+  },
+  profileSection: {
+    alignItems: "center",
+    marginBottom: verticalScale(20),
   },
   imageContainer: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
+    height: moderateScale(120),
+    width: moderateScale(120),
+    borderRadius: moderateScale(60),
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#007BFF",
+    backgroundColor: Colors.redThemeColor,
+    elevation: 4,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
   },
   avatar: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
-    backgroundColor: "#007BFF",
+    height: moderateScale(120),
+    width: moderateScale(120),
+    borderRadius: moderateScale(60),
+    backgroundColor: Colors.redThemeColor,
     justifyContent: "center",
     alignItems: "center",
+    elevation: 4,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
   },
   avatarText: {
-    fontSize: 36,
-    color: "#fff",
-    fontWeight: "bold",
+    fontSize: moderateScale(42),
+    color: Colors.white,
+    fontWeight: "700",
   },
   imageBackground: {
-    height: 100,
-    width: 100,
+    height: moderateScale(120),
+    width: moderateScale(120),
   },
   imageStyle: {
-    borderRadius: 50,
+    borderRadius: moderateScale(60),
   },
   userName: {
-    marginTop: 10,
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#fff",
+    marginTop: verticalScale(16),
+    fontSize: moderateScale(24),
+    fontWeight: "700",
+    color: Colors.white,
+    marginBottom: verticalScale(24),
   },
   action: {
     flexDirection: "row",
-    marginTop: 10,
-    marginBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f2f2f2",
-    paddingBottom: 5,
+    alignItems: "center",
+    backgroundColor: Colors.darkGrey,
+    marginVertical: verticalScale(8),
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    elevation: 2,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
   },
   textInput: {
     flex: 1,
-    paddingLeft: 10,
-    color: "#fff",
+    paddingLeft: horizontalScale(12),
+    color: Colors.white,
+    fontSize: moderateScale(16),
   },
+  updateButton: {
+    marginTop: verticalScale(24),
+    backgroundColor: Colors.redThemeColor,
+    borderRadius: moderateScale(12),
+    padding: moderateScale(16),
+    marginBottom: moderateScale(32),
+  }
 });

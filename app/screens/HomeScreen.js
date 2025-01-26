@@ -1,135 +1,171 @@
 import React from "react";
-import { ScrollView, View, Text, Button, StyleSheet, Dimensions, TextInput, Platform } from "react-native";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-// import { Ionicons } from '@expo/vector-icons';
-
-//i need to redo home screen lmao all hardcoded
-
-
-// Determine if the device has a notch (based on platform and screen height)
-const { height: windowHeight } = Dimensions.get('window');
-const hasNotch = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTV && windowHeight > 800;
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Colors, horizontalScale, verticalScale, moderateScale } from '../themes';
+import { Card } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const HomeScreen = ({ navigation }) => {
-  const insets = useSafeAreaInsets();
+ return (
+   <View style={styles.container}>
+     <ScrollView contentContainerStyle={styles.scrollContainer}>
+       <View style={styles.header}>
+         <Text style={styles.welcomeText}>Welcome to Truck Logistics Pro!</Text>
+         <Text style={styles.subText}>Your one-stop app for managing truck logistics.</Text>
+       </View>
 
-  return (
-    <View style={styles.container}>
-      {/* Search Bar */}
-      {/* <View style={[styles.searchBarContainer, { paddingTop: hasNotch ? insets.top : 20 }]}>
-        <Ionicons name="search" size={20} color="#6c6c6e" style={styles.searchIcon} />
-        <TextInput
-          placeholder="Search..."
-          placeholderTextColor="#6c6c6e"
-          style={styles.searchInput}
-        />
-      </View> */}
+       <Card style={styles.card}>
+         <Card.Title 
+           title="Recent Activity" 
+           titleStyle={styles.cardTitle}
+           left={() => <Icon name="history" size={24} color={Colors.redThemeColor} />}
+         />
+         <Card.Content>
+           <ActivityItem icon="receipt" text="Last Receipt: Delivered 2 hours ago" />
+           <ActivityItem icon="wrench" text="Maintenance Check: 3 days left" />
+           <ActivityItem icon="oil" text="Next Oil Change: 200 miles remaining" />
+         </Card.Content>
+       </Card>
 
-      {/* Content */}
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <Text style={styles.welcomeText}>Welcome to Truck Logistics Pro!</Text>
-        <Text style={styles.subText}>Your one-stop app for managing truck logistics.</Text>
+       <Card style={styles.card}>
+         <Card.Title 
+           title="Quick Access" 
+           titleStyle={styles.cardTitle}
+           left={() => <Icon name="star" size={24} color={Colors.redThemeColor} />}
+         />
+         <Card.Content style={styles.buttonGrid}>
+           <QuickAccessButton
+             icon="file-document"
+             title="View All Receipts"
+             onPress={() => navigation.navigate("Reports")}
+           />
+           <QuickAccessButton 
+             icon="truck"
+             title="Manage Fleet"
+             onPress={() => navigation.navigate("Stats")}
+           />
+         </Card.Content>
+       </Card>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Activity</Text>
-          <Text style={styles.itemText}>📄 Last Receipt: Delivered 2 hours ago</Text>
-          <Text style={styles.itemText}>🛠 Maintenance Check: 3 days left</Text>
-          <Text style={styles.itemText}>🔧 Next Oil Change: 200 miles remaining</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Access</Text>
-          <Button
-            title="View All Receipts"
-            onPress={() => navigation.navigate("Reports")}
-            color="#004d40"
-          />
-          <Button
-            title="Manage Fleet"
-            onPress={() => navigation.navigate("Stats")}
-            color="#004d40"
-          />
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Statistics</Text>
-          <Text style={styles.itemText}>🚛 Active Trucks: 15</Text>
-          <Text style={styles.itemText}>💰 Total Income: $50,000</Text>
-          <Text style={styles.itemText}>🕒 Average Delivery Time: 4.5 hours</Text>
-        </View>
-
-        {/* Add some space at the bottom to account for the tab bar */}
-        <View style={styles.bottomSpacer} />
-      </ScrollView>
-    </View>
-  );
+       <Card style={styles.card}>
+         <Card.Title 
+           title="Statistics" 
+           titleStyle={styles.cardTitle}
+           left={() => <Icon name="chart-bar" size={24} color={Colors.redThemeColor} />}
+         />
+         <Card.Content style={styles.statsGrid}>
+           <StatItem icon="truck" value="15" label="Active Trucks" />
+           <StatItem icon="cash" value="$50,000" label="Income" />
+           <StatItem icon="clock" value="4.5h" label="Avg Delivery" />
+         </Card.Content>
+       </Card>
+     </ScrollView>
+   </View>
+ );
 };
 
-export default HomeScreen;
+const ActivityItem = ({ icon, text }) => (
+ <View style={styles.activityItem}>
+   <Icon name={icon} size={20} color={Colors.redThemeColor} />
+   <Text style={styles.activityText}>{text}</Text>
+ </View>
+);
+
+const QuickAccessButton = ({ icon, title, onPress }) => (
+ <TouchableOpacity style={styles.quickButton} onPress={onPress}>
+   <Icon name={icon} size={30} color={Colors.redThemeColor} />
+   <Text style={styles.quickButtonText}>{title}</Text>
+ </TouchableOpacity>
+);
+
+const StatItem = ({ icon, value, label }) => (
+ <View style={styles.statItem}>
+   <Icon name={icon} size={24} color={Colors.redThemeColor} />
+   <Text style={styles.statValue}>{value}</Text>
+   <Text style={styles.statLabel}>{label}</Text>
+ </View>
+);
 
 const styles = StyleSheet.create({
-  container: {
+ container: {
+   flex: 1,
+   backgroundColor: Colors.black_grey,
+ },
+ scrollContainer: {
+   padding: horizontalScale(16),
+ },
+ header: {
+   marginVertical: verticalScale(38),
+   alignItems: 'center',
+ },
+ welcomeText: {
+   fontSize: moderateScale(22),
+   fontWeight: 'bold',
+   color: Colors.white,
+   marginBottom: verticalScale(8),
+ },
+ subText: {
+   fontSize: moderateScale(16),
+   color: Colors.grey,
+ },
+ card: {
+  backgroundColor: Colors.darkGrey, // Or use Colors.darkGrey if you prefer
+  marginBottom: verticalScale(16),
+  elevation: 4,
+},
+quickButton: {
     flex: 1,
-    backgroundColor: '#1c1c1e',
-  },
-  searchBarContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1c1c1e',
-    borderBottomColor: '#29292b',
-    borderBottomWidth: 1,
-    padding: 10,
-    zIndex: 10,
-    position: 'relative', // Ensures search bar is within the normal flow
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    backgroundColor: '#29292b',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    color: '#fff',
-  },
-  scrollContainer: {
-    paddingHorizontal: 12,
-    paddingTop: 50, // Padding to ensure content starts below the search bar
-  },
-  welcomeText: {
-    paddingTop:20,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
-    textAlign: 'center',
-    
-  },
-  subText: {
-    fontSize: 16,
-    color: '#b0b0b0',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  section: {
-    backgroundColor: '#29292b',
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
-  },
-  itemText: {
-    fontSize: 16,
-    color: '#b0b0b0',
-    marginBottom: 5,
-  },
-  bottomSpacer: {
-    height: 80, // Adjust this value if necessary to ensure content isn't hidden
-  },
+    backgroundColor: '#2c2c2e', // Slightly darker than card background
+    padding: moderateScale(16),
+    borderRadius: moderateScale(12),
+},
+ cardTitle: {
+   color: Colors.white,
+ },
+ activityItem: {
+   flexDirection: 'row',
+   alignItems: 'center',
+   marginBottom: verticalScale(12),
+   gap: horizontalScale(8),
+ },
+ activityText: {
+   fontSize: moderateScale(14),
+   color: Colors.grey,
+ },
+ buttonGrid: {
+   flexDirection: 'row',
+   justifyContent: 'space-between',
+   gap: horizontalScale(12),
+ },
+ quickButton: {
+   flex: 1,
+   alignItems: 'center',
+   backgroundColor: Colors.darkGrey,
+   padding: moderateScale(16),
+   borderRadius: moderateScale(12),
+ },
+ quickButtonText: {
+   color: Colors.white,
+   marginTop: verticalScale(8),
+ },
+ statsGrid: {
+   flexDirection: 'row',
+   justifyContent: 'space-between',
+ },
+ statItem: {
+   alignItems: 'center',
+ },
+ statValue: {
+   fontSize: moderateScale(18),
+   fontWeight: 'bold',
+   color: Colors.white,
+   marginTop: verticalScale(8),
+ },
+ statLabel: {
+   fontSize: moderateScale(12),
+   color: Colors.grey,
+   marginTop: verticalScale(4),
+ },
 });
+
+export default HomeScreen;

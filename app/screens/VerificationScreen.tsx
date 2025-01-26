@@ -73,7 +73,7 @@ const VerificationScreen = ({ route }: { route: VerificationScreenRouteProp }) =
             <Modal visible={isModalVisible} transparent={true}>
               <View style={styles.modalContainer}>
                 <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>Close</Text>
+                <Text style={styles.closeButtonText}>X</Text>
             </TouchableOpacity>
             <Image source={{ uri }} style={styles.fullScreenImage} resizeMode="contain" />
                 </View>
@@ -100,92 +100,103 @@ const VerificationScreen = ({ route }: { route: VerificationScreenRouteProp }) =
     },
     contentContainer: {
       paddingTop: 60,
-      paddingBottom: 80, // Extra space for the sticky button
-      paddingHorizontal: 16,
+      paddingBottom: 80,
+      paddingHorizontal: 20,
     },
     header: {
-      marginBottom: 20,
+      marginBottom: 24,
     },
     headerTitle: {
-      fontSize: 24,
-      fontWeight: 'bold',
+      fontSize: 28,
+      fontWeight: '700',
       color: '#fff',
       marginBottom: 8,
     },
     headerSubtitle: {
-      fontSize: 14,
+      fontSize: 16,
       color: '#b0b0b0',
+      lineHeight: 22,
     },
     section: {
-      marginBottom: 20,
+      marginBottom: 24,
     },
     formField: {
-      marginBottom: 16,
+      marginBottom: 20,
     },
     label: {
       fontSize: 16,
       color: '#fff',
       marginBottom: 8,
+      fontWeight: '500',
     },
     input: {
       backgroundColor: '#29292b',
       color: '#fff',
-      borderRadius: 8,
-      padding: 12,
+      borderRadius: 12,
+      padding: 16,
       fontSize: 16,
       borderWidth: 1,
       borderColor: '#444',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
     },
     imagePreview: {
       width: '100%',
-      height: 200,
-      borderRadius: 10,
-      marginBottom: 16,
+      height: 250,
+      borderRadius: 12,
+      marginBottom: 20,
     },
     modalContainer: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: 'rgba(0, 0, 0, 0.9)',
       justifyContent: 'center',
-      alignItems: 'center',
     },
     fullScreenImage: {
       width: '100%',
-      height: '80%',
+      height: '100%',
+      resizeMode: 'contain',
     },
     closeButton: {
       position: 'absolute',
       top: 40,
       right: 20,
-      backgroundColor: '#007BFF',
-      padding: 10,
-      borderRadius: 5,
+      backgroundColor: '#004d40',
+      padding: 12,
+      borderRadius: 30,
+      width: 40,
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      elevation: 5,
+      zIndex: 1,
     },
     closeButtonText: {
       color: '#fff',
-      fontSize: 14,
-      fontWeight: 'bold',
-    },
-    stickyButtonContainer: {
-        backgroundColor: '#007BFF',
-        borderRadius: 8,
-        paddingVertical: 12,
-        alignItems: 'center',
-        marginBottom: 20, // Additional space at the bottom
+      fontSize: 16,
+      fontWeight: '600',
     },
     submitButton: {
-      backgroundColor: '#007BFF',
-      borderRadius: 8,
+      backgroundColor: '#004d40',
+      borderRadius: 12,
       paddingVertical: 18,
       alignItems: 'center',
-      marginBottom: 36, // Additional space at the bottom
-      paddingHorizontal: 24,
-
-
+      marginTop: 24,
+      marginBottom: 36,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
     },
     submitButtonText: {
-      fontSize: 16,
-      fontWeight: 'bold',
+      fontSize: 18,
+      fontWeight: '600',
       color: '#fff',
     },
-  });
+   });
   

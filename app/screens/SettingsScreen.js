@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import defaultImage from "../assets/icons/default-avatar.png";
 import { useFocusEffect } from '@react-navigation/native'; // Add this import
+import { Colors } from '../themes';
 
 export default function Example() {
   const { user, logout } = useContext(AuthContext);
@@ -78,7 +79,7 @@ export default function Example() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#1c1c1e' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.black_grey }}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Settings</Text>
@@ -198,77 +199,65 @@ export default function Example() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1c1c1e',
+    backgroundColor: Colors.black_grey,
     paddingVertical: 24,
-    paddingHorizontal: 0,
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-    marginBottom: 36,
+    flex: 1,
+    marginBottom: 24,
   },
-  contentFooter: {
-    marginTop: 24,
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#929292',
-    textAlign: 'center',
-  },
-  /** Header */
   header: {
     paddingHorizontal: 24,
-    marginBottom: 12,
+    marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#fff',
+    fontSize: 34,
+    fontWeight: '800',
+    color: Colors.white,
+    letterSpacing: 0.5,
   },
   headerSubtitle: {
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#b0b0b0',
-    marginTop: 6,
+    fontSize: 16,
+    color: Colors.grey,
+    marginTop: 8,
   },
-  /** Profile */
   profile: {
-    padding: 16,
-    flexDirection: 'column',
+    padding: 24,
     alignItems: 'center',
-    backgroundColor: '#29292b',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#29292b',
+    backgroundColor: Colors.darkGrey,
+    borderRadius: 16,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
   },
   avatar: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    backgroundColor: '#007BFF',
+    height: 80,
+    width: 80,
+    borderRadius: 40,
+    backgroundColor: Colors.redThemeColor,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation: 4,
+    shadowColor: Colors.redThemeColor,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
   },
   avatarText: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  profileAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 9999,
-    backgroundColor: '#fff'
+    fontSize: 28,
+    color: Colors.white,
+    fontWeight: '700',
   },
   profileName: {
-    marginTop: 12,
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#ffff',
+    marginTop: 16,
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.white,
   },
   profileEmail: {
-    marginTop: 6,
+    marginTop: 8,
     fontSize: 16,
-    fontWeight: '400',
-    color: '#b0b0b0',
+    color: Colors.grey,
   },
   profileAction: {
     marginTop: 12,
@@ -286,63 +275,54 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
   },
-  /** Section */
   section: {
-    paddingTop: 12,
+    marginBottom: 24,
   },
   sectionTitle: {
-    marginVertical: 8,
+    marginBottom: 12,
     marginHorizontal: 24,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    color: '#b0b0b0',
+    color: Colors.grey,
     textTransform: 'uppercase',
-    letterSpacing: 1.2,
+    letterSpacing: 1,
   },
   sectionBody: {
-    paddingLeft: 24,
-    backgroundColor: '#29292b',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#29292b',
+    backgroundColor: Colors.darkGrey,
+    borderRadius: 16,
+    marginHorizontal: 16,
+    paddingLeft: 16,
+    overflow: 'hidden',
   },
-  /** Row */
   row: {
-    paddingVertical: 12,
-    paddingRight: 24,
+    paddingVertical: 16,
+    paddingRight: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  rowFirst: {
-    paddingTop: 16,
-  },
   rowWrapper: {
-    paddingRight: 16,
-    marginLeft: 0,
     borderTopWidth: 1,
-    borderColor: '#444444',
+    borderColor: Colors.transParent,
+  },
+  rowFirst: {
+    borderTopWidth: 0,
   },
   rowLabel: {
-    fontSize: 17,
-    fontWeight: '400',
-    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+    color: Colors.white,
+    flex: 1,
   },
   rowValue: {
-    fontSize: 17,
-    fontWeight: '300',
-    color: '#b0b0b0',
+    fontSize: 16,
+    color: Colors.grey,
     marginRight: 8,
   },
-  rowSpacer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: 0,
-  },
   rowIcon: {
-    marginRight: 12,
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    marginRight: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },

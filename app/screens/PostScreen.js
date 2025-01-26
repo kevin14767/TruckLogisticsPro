@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import ImagePicker from "react-native-image-crop-picker";
+import { Colors, horizontalScale, verticalScale, moderateScale } from '../themes';
+import Icon from 'react-native-vector-icons/MaterialIcons'; // Assuming you have react-native-vector-icons installed
 
 const PostScreen = () => {
-  const [selectedImage, setSelectedImage] = useState(null); // No need for explicit typing in JS
+  const [selectedImage, setSelectedImage] = useState(null);
   const [isPhotoTaken, setIsPhotoTaken] = useState(false);
   const navigation = useNavigation();
 
@@ -40,12 +42,12 @@ const PostScreen = () => {
 
   const handleRetakePhoto = () => {
     setSelectedImage(null);
-    setIsPhotoTaken(false); // Reset to allow retaking the photo
+    setIsPhotoTaken(false);
   };
 
   const handleProcess = () => {
     if (selectedImage) {
-      console.log("Processing Image")
+      console.log("Processing Image");
       navigation.navigate("ImageDetailsScreen", { uri: selectedImage });
     } else {
       console.log("No image selected");
@@ -61,32 +63,27 @@ const PostScreen = () => {
             style={styles.imagePreview}
             resizeMode="contain"
           />
-  
-          {/* Process Image Button under the Image Preview */}
+          <TouchableOpacity onPress={handleRetakePhoto} style={styles.retakeButton}>
+            <Icon name="refresh" size={24} color={Colors.white} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleProcess} style={styles.processImage}>
             <Text style={styles.buttonText}>Process Image</Text>
-          </TouchableOpacity>
-  
-          {/* Retake Button at the top-right corner */}
-          <TouchableOpacity onPress={handleRetakePhoto} style={styles.retakeButton}>
-            <Text style={styles.buttonText}>Retake</Text>
           </TouchableOpacity>
         </>
       ) : (
         <View style={styles.bottomButtonsContainer}>
-          <TouchableOpacity onPress={handleOpenCamera} style={styles.openCamera}>
+          <TouchableOpacity onPress={handleOpenCamera} style={styles.button}>
+            <Icon name="camera-alt" size={24} color={Colors.white} />
             <Text style={styles.buttonText}>Open Camera</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleSelectImage} style={styles.openLibrary}>
+          <TouchableOpacity onPress={handleSelectImage} style={styles.button}>
+            <Icon name="photo-library" size={24} color={Colors.white} />
             <Text style={styles.buttonText}>Open Photo Library</Text>
           </TouchableOpacity>
         </View>
       )}
     </View>
   );
-  
-
-
 };
 
 const styles = StyleSheet.create({
@@ -94,57 +91,53 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#29292b',
+    backgroundColor: Colors.darkGrey,
   },
-  openCamera: {
-    flex: 1,
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ff6347',
-    padding: 20,
-    borderRadius: 5,
-    alignItems: 'center', // Center text within the button
-    marginRight: 10, // Add space between the two buttons
-  },
-  openLibrary: {
+    backgroundColor: Colors.redThemeColor,
+    padding: moderateScale(15),
+    borderRadius: moderateScale(10),
+    marginHorizontal: horizontalScale(10),
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#4682b4',
-    padding: 20,
-    borderRadius: 5,
-    alignItems: 'center', // Center text within the button
-    marginLeft: 10, // Add space between the two buttons
   },
   imagePreview: {
     width: '100%',
-    height: '60%',
+    height: '65%', // Keep the original height
+    
   },
   processImage: {
-    backgroundColor: '#ff6347',
-    padding: 13,
-    borderRadius: 5,
-    marginTop: 15, // Adds space between the image and button
+    backgroundColor: Colors.redThemeColor,
+    padding: moderateScale(15),
+    borderRadius: moderateScale(10),
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+    marginTop: verticalScale(20),
   },
   retakeButton: {
     position: 'absolute',
-    top: 90, // Adjust as needed
-    right: 20,
-    backgroundColor: '#ff6347',
-    padding: 12,
-    borderRadius: 5,
+    top: verticalScale(60),
+    right: horizontalScale(20),
+    backgroundColor: Colors.redThemeColor,
+    padding: moderateScale(10),
+    borderRadius: moderateScale(20),
   },
   buttonText: {
-    color: '#fff',
+    color: Colors.white,
     fontWeight: 'bold',
+    marginLeft: horizontalScale(10),
   },
   bottomButtonsContainer: {
     position: 'absolute',
-    bottom: 120, // Place the buttons near the bottom of the screen
-    flexDirection: 'row', // Place the buttons next to each other
-    justifyContent: 'space-between', // Space between the buttons
-    width: '90%', // Adjust width to fit the buttons with padding on the sides
-    paddingHorizontal: 10, // Add padding for the container sides
+    bottom: verticalScale(120),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: horizontalScale(10),
   },
 });
-
 
 export default PostScreen;
