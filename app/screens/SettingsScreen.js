@@ -16,10 +16,15 @@ import firestore from '@react-native-firebase/firestore';
 import defaultImage from "../assets/icons/default-avatar.png";
 import { useFocusEffect } from '@react-navigation/native'; // Add this import
 import { Colors } from '../themes';
+import { useTranslation } from 'react-i18next';
+import { setLanguage } from '../i188n';
+import { ActivityIndicator } from 'react-native';
 
 export default function Example() {
   const { user, logout } = useContext(AuthContext);
   const [userData, setUserData] = useState(null);
+  const [isLanguageLoading, setIsLanguageLoading] = useState(false);
+  const { t, i18n } = useTranslation();
   const [form, setForm] = useState({
     darkMode: false,
     emailNotifications: true,
@@ -28,6 +33,18 @@ export default function Example() {
 
   const navigation = useNavigation();
 
+  // Add this function to handle language change
+  const handleLanguageChange = async () => {
+    setIsLanguageLoading(true);
+    try {
+      const newLanguage = i18n.language === 'en' ? 'es' : 'en';
+      await setLanguage(newLanguage);
+    } catch (error) {
+      console.log('Error changing language:', error);
+    } finally {
+      setIsLanguageLoading(false);
+    }
+  };
   // Fetch user data from Firestore
   const getUserData = async () => {
     try {
@@ -82,8 +99,8 @@ export default function Example() {
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.black_grey }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Settings</Text>
-          <Text style={styles.headerSubtitle}>Manage your account settings.</Text>
+          <Text style={styles.headerTitle}>{t('settings')}</Text>
+          <Text style={styles.headerSubtitle}>{t('manageAccount')}</Text>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -112,27 +129,41 @@ export default function Example() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Preferences</Text>
+            <Text style={styles.sectionTitle}>{t('preferences')}</Text>
 
             <View style={styles.sectionBody}>
-              <View style={[styles.rowWrapper, styles.rowFirst]}>
-                <TouchableOpacity style={styles.row}>
-                  <View style={[styles.rowIcon, { backgroundColor: '#fe9400' }]}>
-                    <FeatherIcon color="#29292b" name="globe" size={20} />
-                  </View>
-                  <Text style={styles.rowLabel}>Language</Text>
-                  <View style={styles.rowSpacer} />
-                  <Text style={styles.rowValue}>English</Text>
-                  <FeatherIcon color="#C6C6C6" name="chevron-right" size={20} />
-                </TouchableOpacity>
-              </View>
+            <View style={[styles.rowWrapper, styles.rowFirst]}>
+              <TouchableOpacity 
+                style={styles.row}
+                onPress={() => {
+                  // Toggle between English and Spanish
+                  handleLanguageChange(i18n.language === 'en' ? 'es' : 'en');
+                }}>
+                <View style={[styles.rowIcon, { backgroundColor: '#fe9400' }]}>
+                  <FeatherIcon color="#29292b" name="globe" size={20} />
+                </View>
+                <Text style={styles.rowLabel}>{t('languagePreference')}</Text>
+                <View style={styles.rowSpacer} />
+                {isLanguageLoading ? (
+                  <ActivityIndicator size="small" color={Colors.greenThemeColor} />
+                ) : (
+                  <>
+                    <Text style={styles.rowValue}>
+                      {i18n.language === 'en' ? t('english') : t('spanish')}
+                    </Text>
+                    <FeatherIcon color="#C6C6C6" name="chevron-right" size={20} />
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+
 
               <View style={styles.rowWrapper}>
                 <View style={styles.row}>
                   <View style={[styles.rowIcon, { backgroundColor: '#007AFF' }]}>
                     <FeatherIcon color="#29292b" name="moon" size={20} />
                   </View>
-                  <Text style={styles.rowLabel}>Dark Mode</Text>
+                  <Text style={styles.rowLabel}>{t('darkMode')}</Text>
                   <View style={styles.rowSpacer} />
                   <Switch
                     onValueChange={(darkMode) => setForm({ ...form, darkMode })}
@@ -146,7 +177,7 @@ export default function Example() {
                   <View style={[styles.rowIcon, { backgroundColor: '#32c759' }]}>
                     <FeatherIcon color="#29292b" name="navigation" size={20} />
                   </View>
-                  <Text style={styles.rowLabel}>Location</Text>
+                  <Text style={styles.rowLabel}>{t('location')}</Text>
                   <View style={styles.rowSpacer} />
                   <Text style={styles.rowValue}>{getLocation()}</Text>     
                 </TouchableOpacity>
@@ -155,7 +186,7 @@ export default function Example() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Notifications</Text>
+            <Text style={styles.sectionTitle}>{t('notifications')}</Text>
 
             <View style={styles.sectionBody}>
               <View style={[styles.rowWrapper, styles.rowFirst]}>
@@ -163,7 +194,7 @@ export default function Example() {
                   <View style={[styles.rowIcon, { backgroundColor: '#38C959' }]}>
                     <FeatherIcon color="#29292b" name="at-sign" size={20} />
                   </View>
-                  <Text style={styles.rowLabel}>Email Notifications</Text>
+                  <Text style={styles.rowLabel}>{t('emailNotifications')}</Text>
                   <View style={styles.rowSpacer} />
                   <Switch
                     onValueChange={(emailNotifications) =>
@@ -179,7 +210,7 @@ export default function Example() {
                   <View style={[styles.rowIcon, { backgroundColor: '#38C959' }]}>
                     <FeatherIcon color="#29292b" name="bell" size={20} />
                   </View>
-                  <Text style={styles.rowLabel}>Push Notifications</Text>
+                  <Text style={styles.rowLabel}>{t('pushNotifications')}</Text>
                   <View style={styles.rowSpacer} />
                   <Switch
                     onValueChange={(pushNotifications) =>
@@ -235,11 +266,11 @@ const styles = StyleSheet.create({
     height: 80,
     width: 80,
     borderRadius: 40,
-    backgroundColor: Colors.redThemeColor,
+    backgroundColor: Colors.greenThemeColor,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
-    shadowColor: Colors.redThemeColor,
+    shadowColor: Colors.greenThemeColor,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
   },
@@ -324,6 +355,13 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 10,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rowSpacer: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
 });

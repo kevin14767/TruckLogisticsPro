@@ -4,10 +4,9 @@ const Colors = {
   transParent: '#b6b9bf',
   grey: '#b0b0b0',
   black_grey: '#1c1c1e',
-  
   darkGrey: '#29292b',
   offWhite: '#f3f3ec',
-  redThemeColor: '#004d40',
+  greenThemeColor: '#004d40',
 };
 
 export default Colors;

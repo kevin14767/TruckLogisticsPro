@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation }) => {
          <Card.Title 
            title="Recent Activity" 
            titleStyle={styles.cardTitle}
-           left={() => <Icon name="history" size={24} color={Colors.redThemeColor} />}
+           left={() => <Icon name="history" size={24} color={Colors.greenThemeColor} />}
          />
          <Card.Content>
            <ActivityItem icon="receipt" text="Last Receipt: Delivered 2 hours ago" />
@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
          <Card.Title 
            title="Quick Access" 
            titleStyle={styles.cardTitle}
-           left={() => <Icon name="star" size={24} color={Colors.redThemeColor} />}
+           left={() => <Icon name="star" size={24} color={Colors.greenThemeColor} />}
          />
          <Card.Content style={styles.buttonGrid}>
            <QuickAccessButton
@@ -50,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
          <Card.Title 
            title="Statistics" 
            titleStyle={styles.cardTitle}
-           left={() => <Icon name="chart-bar" size={24} color={Colors.redThemeColor} />}
+           left={() => <Icon name="chart-bar" size={24} color={Colors.greenThemeColor} />}
          />
          <Card.Content style={styles.statsGrid}>
            <StatItem icon="truck" value="15" label="Active Trucks" />
@@ -65,21 +65,21 @@ const HomeScreen = ({ navigation }) => {
 
 const ActivityItem = ({ icon, text }) => (
  <View style={styles.activityItem}>
-   <Icon name={icon} size={20} color={Colors.redThemeColor} />
+   <Icon name={icon} size={20} color={Colors.greenThemeColor} />
    <Text style={styles.activityText}>{text}</Text>
  </View>
 );
 
 const QuickAccessButton = ({ icon, title, onPress }) => (
  <TouchableOpacity style={styles.quickButton} onPress={onPress}>
-   <Icon name={icon} size={30} color={Colors.redThemeColor} />
+   <Icon name={icon} size={30} color={Colors.greenThemeColor} />
    <Text style={styles.quickButtonText}>{title}</Text>
  </TouchableOpacity>
 );
 
 const StatItem = ({ icon, value, label }) => (
  <View style={styles.statItem}>
-   <Icon name={icon} size={24} color={Colors.redThemeColor} />
+   <Icon name={icon} size={24} color={Colors.greenThemeColor} />
    <Text style={styles.statValue}>{value}</Text>
    <Text style={styles.statLabel}>{label}</Text>
  </View>

@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkGrey,
   },
   periodTabActive: {
-    backgroundColor: Colors.redThemeColor,
+    backgroundColor: Colors.greenThemeColor,
   },
   periodText: {
     color: Colors.grey,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     width: moderateScale(40),
     height: moderateScale(40),
     borderRadius: moderateScale(20),
-    backgroundColor: Colors.redThemeColor,
+    backgroundColor: Colors.greenThemeColor,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: verticalScale(12),

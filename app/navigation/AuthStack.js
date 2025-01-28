@@ -5,8 +5,8 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LanguageSelectionScreen from '../screens/LanguageSelectionScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +25,7 @@ const AuthStack = () => {
                 }
             } catch (error) {
                 console.error('Error checking AsyncStorage', error);
-                setIsFirstLaunch(false); // Default to showing login
+                setIsFirstLaunch(false);
             }
         };
 
@@ -41,7 +41,8 @@ const AuthStack = () => {
     }
 
     return (
-        <Stack.Navigator initialRouteName={isFirstLaunch ? 'Onboarding' : 'Login'}>
+        <Stack.Navigator initialRouteName="Language" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Language" component={LanguageSelectionScreen} />
             <Stack.Screen
                 name="Onboarding"
                 component={OnboardingScreen}
@@ -55,32 +56,12 @@ const AuthStack = () => {
             <Stack.Screen
                 name="Signup"
                 component={SignupScreen}
-                
-                // options={({ navigation }) => ({
-                //     title: '',
-                //     headerStyle: {
-                //         backgroundColor: '#29292b',
-                //         shadowColor: '#29292b',
-                //         elevation: 0,
-                //     },
-                //     headerLeft: () => (
-                //         <View style={{ marginLeft: 10 }}>
-                //             <FontAwesome.Button
-                //                 name="long-arrow-left"
-                //                 size={25}
-                //                 backgroundColor="#29292b"
-                //                 color="#fff"
-                //                 onPress={() => navigation.navigate('Login')}
-                //             />
-                //         </View>
-                //     ),
-                // })}
-                options={{header: ()=> null}}
+                options={{ header: () => null }}
             />
             <Stack.Screen
                 name="ForgotPassword"
                 component={ForgotPasswordScreen}
-                options={{header: () => null}}
+                options={{ header: () => null }}
             />
         </Stack.Navigator>
     );

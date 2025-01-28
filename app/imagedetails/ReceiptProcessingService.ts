@@ -1,3 +1,4 @@
+import { REACT_NATIVE_OPENAI_API_KEY } from '@env';
 import axios from 'axios';
 import { 
   BaseReceipt, 
@@ -7,10 +8,28 @@ import {
   ReceiptType 
 } from './ReceiptInterfaces';
 
+class ReceiptProcessingError extends Error {
+  constructor(message, public code = 'PROCESSING_ERROR') {
+    super(message);
+    this.name = 'ReceiptProcessingError';
+  }
+}
 
 export class ReceiptProcessingService {
+  private static validateEnvironment() {
+    if (!REACT_NATIVE_OPENAI_API_KEY) {
+      throw new ReceiptProcessingError('OpenAI API key not configured', 'CONFIG_ERROR');
+    }
+  }
+
   static async classifyReceiptType(extractedText: string): Promise<ReceiptType | null> {
     try {
+      this.validateEnvironment();
+
+      if (!extractedText?.trim()) {
+        throw new ReceiptProcessingError('No text provided for classification', 'INVALID_INPUT');
+      }
+
       const result = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -34,15 +53,23 @@ export class ReceiptProcessingService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            Authorization: `Bearer ${REACT_NATIVE_OPENAI_API_KEY}`,
           },
         }
       );
 
       return result.data.choices[0]?.message?.content?.trim() as ReceiptType;
     } catch (error) {
-      console.error("Error classifying receipt type:", error.response?.data || error.message);
-      return null;
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.error?.message || error.message;
+        throw new ReceiptProcessingError(`API Error: ${message}`, 'API_ERROR');
+      }
+      if (error instanceof ReceiptProcessingError) {
+        throw error;
+      }
+      throw new ReceiptProcessingError(
+        `Error classifying receipt: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -51,6 +78,16 @@ export class ReceiptProcessingService {
     type: ReceiptType
   ): Promise<BaseReceipt | null> {
     try {
+      this.validateEnvironment();
+
+      if (!extractedText?.trim()) {
+        throw new ReceiptProcessingError('No text provided for processing', 'INVALID_INPUT');
+      }
+
+      if (!type) {
+        throw new ReceiptProcessingError('Receipt type not specified', 'INVALID_INPUT');
+      }
+
       const result = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -65,38 +102,7 @@ export class ReceiptProcessingService {
             },
             {
               role: "user",
-              content: `Extract details for a ${type} receipt from this text: ${extractedText}
-
-              For Fuel Receipt, extract:
-              - Fuel Type (Diesel/Gas)
-              - Quantity (Gallons)
-              - Price per Gallon
-              - Total Cost
-              - Vehicle ID
-              - Date
-              - Odometer Reading
-
-              For Material Transport Receipt, extract:
-              - Material Type
-              - Quantity
-              - Quantity Unit
-              - Origin Location
-              - Destination Location
-              - Transportation Cost
-              - Material Cost
-              - Vehicle ID
-              - Driver Name
-              - Date
-
-              For Haul Off Receipt, extract:
-              - Waste Type
-              - Weight
-              - Weight Unit
-              - Disposal Site
-              - Environmental Fees
-              - Vehicle ID
-              - Date
-              - Total Cost`
+              content: `Extract details for a ${type} receipt from this text: ${extractedText}`
             }
           ],
           max_tokens: 500,
@@ -104,7 +110,7 @@ export class ReceiptProcessingService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            Authorization: `Bearer ${REACT_NATIVE_OPENAI_API_KEY}`,
           },
         }
       );
@@ -113,14 +119,21 @@ export class ReceiptProcessingService {
         result.data.choices[0]?.message?.content || '{}'
       );
 
-      // Add receipt type to processed data
       processedData.receiptType = type;
       processedData.id = `receipt_${Date.now()}`;
 
       return processedData;
     } catch (error) {
-      console.error(`Error processing ${type} receipt:`, error.response?.data || error.message);
-      return null;
+      if (axios.isAxiosError(error)) {
+        const message = error.response?.data?.error?.message || error.message;
+        throw new ReceiptProcessingError(`API Error: ${message}`, 'API_ERROR');
+      }
+      if (error instanceof ReceiptProcessingError) {
+        throw error;
+      }
+      throw new ReceiptProcessingError(
+        `Error processing receipt: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 }

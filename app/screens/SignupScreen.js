@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     lineHeight: moderateScale(20),
   },
   termsLink: {
-    color: Colors.redThemeColor,
+    color: Colors.greenThemeColor,
     fontWeight: '500',
   },
   dividerContainer: {

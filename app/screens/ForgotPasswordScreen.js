@@ -54,14 +54,13 @@ const ForgotPasswordScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
  safeArea: {
    flex: 1,
-   backgroundColor: Colors.darkGrey,
+   backgroundColor: Colors.black_grey,
  },
  container: {
    flex: 1,
    padding: horizontalScale(20),
  },
  backButton: {
-   marginTop: verticalScale(10),
  },
  backText: {
    color: Colors.white,

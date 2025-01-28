@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.redThemeColor,
+    backgroundColor: Colors.greenThemeColor,
     padding: moderateScale(15),
     borderRadius: moderateScale(10),
     marginHorizontal: horizontalScale(10),
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     
   },
   processImage: {
-    backgroundColor: Colors.redThemeColor,
+    backgroundColor: Colors.greenThemeColor,
     padding: moderateScale(15),
     borderRadius: moderateScale(10),
     alignItems: 'center',
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: verticalScale(60),
     right: horizontalScale(20),
-    backgroundColor: Colors.redThemeColor,
+    backgroundColor: Colors.greenThemeColor,
     padding: moderateScale(10),
     borderRadius: moderateScale(20),
   },

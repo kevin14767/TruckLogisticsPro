@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from "react-native";
 import Onboarding from "react-native-onboarding-swiper";
-import { horizontalScale, verticalScale, moderateScale } from "../themes/Metrics";
+import { horizontalScale, verticalScale, moderateScale, Colors } from "../themes";
 
 
 // Using device dimensions helps create a more responsive layout
@@ -50,7 +50,7 @@ const OnboardingScreen = ({ navigation }) => {
       // Pages have been enhanced with better spacing and typography
       pages={[
         {
-          backgroundColor: "#004d40",
+          backgroundColor: Colors.black_grey,
           image: (
             <Image
               source={require("../assets/icons/trucking_logistics.png")}
@@ -64,7 +64,7 @@ const OnboardingScreen = ({ navigation }) => {
           subTitleStyles: styles.subtitle,
         },
         {
-          backgroundColor: "#1c1c1e",
+          backgroundColor: Colors.greenThemeColor,
           image: (
             <Image
               source={require("../assets/icons/pngwing.com(1).png")}
